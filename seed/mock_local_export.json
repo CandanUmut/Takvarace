@@ -1,0 +1,29 @@
+{
+  "profile": {
+    "alias": "TakvaPilot",
+    "languageCode": "en",
+    "shareScore": true
+  },
+  "deeds": [
+    {
+      "ts": 1733962981,
+      "type": "quran",
+      "points": 6,
+      "meta": { "minutes": 10 },
+      "source": "form",
+      "note": "Morning recitation",
+      "lang": "en"
+    }
+  ],
+  "falls": [],
+  "streak": { "last_fall_ts": 1733900000, "current_seconds": 86400 },
+  "diary": [
+    {
+      "id": "sample",
+      "title": "First Reflection",
+      "content": "A calm day with focused dhikr.",
+      "tags": ["gratitude"],
+      "timestamp": 1733962981
+    }
+  ]
+}
