@@ -1,0 +1,10 @@
+{
+  "default": 1,
+  "prayer": { "base": 10, "congregation": 3, "masjid": 5 },
+  "quran": { "minute": 6, "page": 6, "block": 10, "unit": "time" },
+  "dhikr": 5,
+  "walk": { "steps": { "5": 8, "10": 12, "15": 15 } },
+  "istighfar": 5,
+  "repentance_base": 25,
+  "repentance_recovery": 15
+}

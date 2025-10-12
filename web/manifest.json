@@ -1,0 +1,10 @@
+{
+  "name": "Takva",
+  "short_name": "Takva",
+  "start_url": "/Takvarace/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2E7D32",
+  "description": "Privacy-first good deeds tracker",
+  "icons": []
+}
