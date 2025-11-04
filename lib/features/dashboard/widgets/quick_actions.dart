@@ -25,59 +25,59 @@ class QuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
     return Wrap(
-      spacing: 12,
-      runSpacing: 12,
+      spacing: 16,
+      runSpacing: 16,
       children: [
-        _actionButton(
+        _actionCard(
           context,
           label: '${strings.translate('quran')} 10m',
           points: _valueFromConfig('quran', amount: 10, unit: 'minute'),
           type: DeedType.quran,
           meta: const {'minutes': 10},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: strings.translate('dhikr'),
           points: _configValue('dhikr'),
           type: DeedType.dhikr,
           meta: const {'context': 'morning_evening'},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: strings.translate('walk'),
           points: _valueFromSteps(10),
           type: DeedType.walk,
           meta: const {'minutes': 10},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: strings.translate('istighfar'),
           points: _valueFromConfig('istighfar', amount: 33, unit: 'x'),
           type: DeedType.istighfar,
           meta: const {'repetitions': 33},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: '${strings.translate('repentance')} +',
           points: _configValue('repentance_base') + _configValue('repentance_recovery'),
           type: DeedType.repentance,
           meta: const {'quick': true},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: '${strings.translate('prayer')} (Farz)',
           points: _prayerPoints(),
           type: DeedType.prayer,
           meta: const {'mode': 'solo'},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: '${strings.translate('prayer')} (Jamaah)',
           points: _prayerPoints(congregation: true),
           type: DeedType.prayer,
           meta: const {'mode': 'congregation'},
         ),
-        _actionButton(
+        _actionCard(
           context,
           label: '${strings.translate('prayer')} (Masjid)',
           points: _prayerPoints(congregation: true, masjid: true),
@@ -118,27 +118,76 @@ class QuickActions extends StatelessWidget {
     return 0;
   }
 
-  Widget _actionButton(BuildContext context,
-      {required String label,
-      required int points,
-      required DeedType type,
-      required Map<String, dynamic> meta}) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final entry = DeedEntry(
-          timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-          type: type,
-          points: points,
-          meta: meta,
-          source: DeedSource.form,
-        );
-        await onAction(entry);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${label} +$points')),
-        );
-      },
-      icon: const Icon(Icons.add),
-      label: Text(label),
+  Widget _actionCard(
+    BuildContext context, {
+    required String label,
+    required int points,
+    required DeedType type,
+    required Map<String, dynamic> meta,
+  }) {
+    final theme = Theme.of(context);
+    final strings = AppLocalizations.of(context);
+    return SizedBox(
+      width: 200,
+      child: Material(
+        color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: points == 0
+              ? null
+              : () async {
+                  final entry = DeedEntry(
+                    timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                    type: type,
+                    points: points,
+                    meta: meta,
+                    source: DeedSource.form,
+                  );
+                  await onAction(entry);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${strings.translate('companionQuickAdd')} $label (+$points)',
+                      ),
+                    ),
+                  );
+                },
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(_iconForType(type), color: theme.colorScheme.primary),
+                const SizedBox(height: 12),
+                Text(label, style: theme.textTheme.titleMedium),
+                const SizedBox(height: 6),
+                Text('${strings.translate('points')}: +$points', style: theme.textTheme.bodyMedium),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
+  }
+
+  IconData _iconForType(DeedType type) {
+    switch (type) {
+      case DeedType.quran:
+        return Icons.menu_book_rounded;
+      case DeedType.dhikr:
+        return Icons.brightness_auto_outlined;
+      case DeedType.walk:
+        return Icons.directions_walk_rounded;
+      case DeedType.istighfar:
+        return Icons.repeat_rounded;
+      case DeedType.repentance:
+        return Icons.healing;
+      case DeedType.prayer:
+        return Icons.mosque_outlined;
+      default:
+        return Icons.auto_fix_high;
+    }
   }
 }
