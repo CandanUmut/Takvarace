@@ -5,22 +5,32 @@ class UserProfile {
     required this.alias,
     required this.languageCode,
     required this.shareScore,
+    this.focusAreas = const [],
+    this.dailyIntention,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
         alias: json['alias'] as String,
         languageCode: json['languageCode'] as String? ?? 'en',
         shareScore: json['shareScore'] as bool? ?? true,
+        focusAreas: (json['focusAreas'] as List<dynamic>? ?? [])
+            .map((e) => e.toString())
+            .toList(),
+        dailyIntention: json['dailyIntention'] as String?,
       );
 
   final String alias;
   final String languageCode;
   final bool shareScore;
+  final List<String> focusAreas;
+  final String? dailyIntention;
 
   Map<String, dynamic> toJson() => {
         'alias': alias,
         'languageCode': languageCode,
         'shareScore': shareScore,
+        'focusAreas': focusAreas,
+        'dailyIntention': dailyIntention,
       };
 
   String toEncoded() => jsonEncode(toJson());
@@ -32,11 +42,19 @@ class UserProfile {
     return UserProfile.fromJson(jsonDecode(value) as Map<String, dynamic>);
   }
 
-  UserProfile copyWith({String? alias, String? languageCode, bool? shareScore}) {
+  UserProfile copyWith({
+    String? alias,
+    String? languageCode,
+    bool? shareScore,
+    List<String>? focusAreas,
+    String? dailyIntention,
+  }) {
     return UserProfile(
       alias: alias ?? this.alias,
       languageCode: languageCode ?? this.languageCode,
       shareScore: shareScore ?? this.shareScore,
+      focusAreas: focusAreas ?? this.focusAreas,
+      dailyIntention: dailyIntention ?? this.dailyIntention,
     );
   }
 }
