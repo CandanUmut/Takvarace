@@ -45,7 +45,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     ),
   };
   String _selectedGoal = 'steady';
-  bool _pomodoroListenerAttached = false;
   List<DeedEntry> _parsedEntries = [];
   List<String> _suggestions = [];
 
@@ -57,28 +56,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_pomodoroListenerAttached) {
-      _pomodoroListenerAttached = true;
-      ref.listen<AsyncValue<PomodoroState>>(pomodoroControllerProvider, (previous, next) {
-        final previousMode = previous?.valueOrNull?.lastCompletedMode;
-        final newMode = next.valueOrNull?.lastCompletedMode;
-        if (newMode != null && newMode != previousMode) {
-          final strings = AppLocalizations.of(context);
-          final message = newMode == PomodoroMode.focus
-              ? strings.translate('dashboardPomodoroFocusComplete')
-              : strings.translate('dashboardPomodoroBreakComplete');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
-          );
-        }
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<PomodoroState>>(pomodoroControllerProvider, (previous, next) {
+      final previousMode = previous?.valueOrNull?.lastCompletedMode;
+      final newMode = next.valueOrNull?.lastCompletedMode;
+      if (newMode != null && newMode != previousMode) {
+        final strings = AppLocalizations.of(context);
+        final message = newMode == PomodoroMode.focus
+            ? strings.translate('dashboardPomodoroFocusComplete')
+            : strings.translate('dashboardPomodoroBreakComplete');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    });
+
     final strings = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final profile = ref.watch(profileControllerProvider).value;

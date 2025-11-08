@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -45,6 +46,6 @@ class SecureStore {
     final bytes = List<int>.generate(32, (_) => random.nextInt(256));
     final base64Key = base64Encode(bytes);
     await _storage.write(key: _masterKey, value: base64Key);
-    return encrypt.Key(bytes);
+    return encrypt.Key(Uint8List.fromList(bytes));
   }
 }
