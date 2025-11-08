@@ -10,6 +10,7 @@ class SupabaseManager {
   SupabaseManager._internal();
 
   bool _initialized = false;
+  bool _authUnavailable = false;
 
   Future<SupabaseClient> init() async {
     if (_initialized) {
@@ -24,11 +25,23 @@ class SupabaseManager {
     return Supabase.instance.client;
   }
 
-  Future<void> ensureAnonSession() async {
+  Future<bool> ensureAnonSession() async {
+    if (_authUnavailable) {
+      return false;
+    }
     final client = Supabase.instance.client;
     final session = client.auth.currentSession;
-    if (session == null) {
+    if (session != null) {
+      return true;
+    }
+    try {
       await client.auth.signInAnonymously();
+      return true;
+    } on AuthException {
+      _authUnavailable = true;
+      return false;
+    } catch (_) {
+      return false;
     }
   }
 }
