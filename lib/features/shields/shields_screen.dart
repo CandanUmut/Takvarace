@@ -9,7 +9,7 @@ class ShieldsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final strings = AppLocalizations.of(context);
-    final guides = [
+    const guides = <({String title, List<String> steps})>[
       (
         title: 'iOS Screen Time',
         steps: [
@@ -47,9 +47,11 @@ class ShieldsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(guide.$1, style: Theme.of(context).textTheme.titleMedium),
+                  Text(guide.title, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
-                  ...guide.$2.map((step) => ListTile(leading: const Icon(Icons.check), title: Text(step))).toList(),
+                  ...guide.steps
+                      .map((step) => ListTile(leading: const Icon(Icons.check), title: Text(step)))
+                      .toList(),
                 ],
               ),
             ),
