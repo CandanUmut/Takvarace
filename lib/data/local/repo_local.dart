@@ -5,8 +5,10 @@ import 'package:collection/collection.dart';
 import '../../domain/models/deed.dart';
 import '../../domain/models/diary_entry.dart';
 import '../../domain/models/fall.dart';
+import '../../domain/models/pomodoro_settings.dart';
 import '../../domain/models/streak.dart';
 import '../../domain/models/user_profile.dart';
+import '../../domain/models/zikr_state.dart';
 import 'secure_store.dart';
 
 class LocalRepository {
@@ -17,6 +19,8 @@ class LocalRepository {
   static const _fallsKey = 'falls.json.enc';
   static const _streakKey = 'streak.json.enc';
   static const _diaryKey = 'diary.json.enc';
+  static const _zikrKey = 'zikr.json.enc';
+  static const _pomodoroKey = 'pomodoro.json.enc';
 
   final SecureStore _store;
 
@@ -125,6 +129,28 @@ class LocalRepository {
   Future<void> saveDiary(List<DiaryEntry> entries) async {
     final encoded = jsonEncode(entries.map((e) => e.toJson()).toList());
     await _store.writeEncrypted(_diaryKey, encoded);
+  }
+
+  Future<ZikrState> loadZikrState() async {
+    final encoded = await _store.readEncrypted(_zikrKey);
+    if (encoded == null) return ZikrState.initial();
+    return ZikrState.fromJson(jsonDecode(encoded) as Map<String, dynamic>);
+  }
+
+  Future<void> saveZikrState(ZikrState state) async {
+    final encoded = jsonEncode(state.toJson());
+    await _store.writeEncrypted(_zikrKey, encoded);
+  }
+
+  Future<PomodoroSettings> loadPomodoroSettings() async {
+    final encoded = await _store.readEncrypted(_pomodoroKey);
+    if (encoded == null) return PomodoroSettings.initial();
+    return PomodoroSettings.fromJson(jsonDecode(encoded) as Map<String, dynamic>);
+  }
+
+  Future<void> savePomodoroSettings(PomodoroSettings settings) async {
+    final encoded = jsonEncode(settings.toJson());
+    await _store.writeEncrypted(_pomodoroKey, encoded);
   }
 
   Future<String> exportDiary() async {
