@@ -13,7 +13,10 @@ class ScoreRepository {
       return; // offline mode
     }
     final client = await _manager.init();
-    await _manager.ensureAnonSession();
+    final hasSession = await _manager.ensureAnonSession();
+    if (!hasSession) {
+      return;
+    }
     final weekStart = WeekUtils.weekStart(DateTime.now());
     final weekDate = weekStart.toIso8601String().substring(0, 10);
     await client.from('leaderboard').upsert({
@@ -28,7 +31,10 @@ class ScoreRepository {
       return [];
     }
     final client = await _manager.init();
-    await _manager.ensureAnonSession();
+    final hasSession = await _manager.ensureAnonSession();
+    if (!hasSession) {
+      return [];
+    }
     final weekStart = WeekUtils.weekStart(DateTime.now());
     final weekDate = weekStart.toIso8601String().substring(0, 10);
     final response = await client
@@ -45,7 +51,10 @@ class ScoreRepository {
       return;
     }
     final client = await _manager.init();
-    await _manager.ensureAnonSession();
+    final hasSession = await _manager.ensureAnonSession();
+    if (!hasSession) {
+      return;
+    }
     await client.from('users').upsert({
       'id': client.auth.currentUser!.id,
       'alias': profile.alias,
